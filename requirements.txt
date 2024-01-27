@@ -1,1 +1,1 @@
--U dataprep
+pip install -U dataprep
