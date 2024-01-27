@@ -1,2 +1,2 @@
-# deploy-streamlit-dataprep
+⚠ not working in Streamlit ⚠
 Dataprep EDA Visualizations in Streamlit app
