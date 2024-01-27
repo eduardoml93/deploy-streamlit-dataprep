@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 from dataprep.eda import create_report
 import streamlit.components.v1 as components
-import os
 
 def app(title=None):
     st.set_page_config(layout="wide")
@@ -16,6 +15,9 @@ def app(title=None):
         df = pd.read_csv(uploaded_file)
         st.title("Dataframe:")
         st.write(df)
+
+        # Convert all columns to appropriate types
+        df = df.convert_dtypes()
 
         # Use a função de análise do módulo dataprep para criar um objeto 'DataframeReport'.
         @st.cache_data
