@@ -1,3 +1,1 @@
-dataprep
-pandas
-numpy
+-U dataprep
