@@ -2,24 +2,34 @@ import streamlit as st
 import pandas as pd
 from dataprep.eda import create_report
 import streamlit.components.v1 as components
+import os
+
 
 def app(title=None):
     st.set_page_config(layout="wide")
     st.title(title)
 
-    # Use a função st.file_uploader para permitir ao usuário fazer upload de um arquivo CSV
-    uploaded_file = st.file_uploader("Choose a CSV file")
+    # use OS library to get the current directory
+    current_dir = os.getcwd()
+
+    # use OS library to list all files CSV in the current directory
+    current_dir = os.listdir(current_dir)
+    current_dir = [f for f in current_dir if f.endswith('.csv')]
+
+    # upload file local
+    uploaded_file = st.selectbox("Choose a CSV file", current_dir)
+
+    # Add a select box for choosing the separator
+    sep = st.selectbox("Select the separator", ("Comma", "Tab", ";", ":"))
+    sep = "," if sep == "Comma" else "\t" if sep == "Tab" else ";" if sep == ";" else ":"
 
     if uploaded_file is not None:
-        # Ler os dados CSV do arquivo carregado
-        df = pd.read_csv(uploaded_file)
+        # Read the CSV data from the uploaded file
+        df = pd.read_csv(uploaded_file, sep=sep)
         st.title("Dataframe:")
         st.write(df)
 
-        # Convert all columns to appropriate types
-        df = df.convert_dtypes()
-
-        # Use a função de análise do módulo dataprep para criar um objeto 'DataframeReport'.
+        # Use the analysis function from dataprep module to create a 'DataframeReport' object.
         @st.cache_data
         def generate_report(df):
             report = create_report(df)
@@ -28,7 +38,7 @@ def app(title=None):
             source_code = HtmlFile.read() 
             return source_code
 
-        # Renderizar a saída em uma página web.
+        # Render the output on a web page.
         if 'source_code' in st.session_state:
             # Se o estado da sessão já existir, recuperamos o valor
             source_code = st.session_state['source_code']
