@@ -3,26 +3,21 @@ import pandas as pd
 from dataprep.eda import create_report
 import streamlit.components.v1 as components
 import os
-from io import StringIO
 
 def app(title=None):
     st.set_page_config(layout="wide")
     st.title(title)
 
-    # Add a file uploader for CSV files
-    uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
-
-    # Add a select box for choosing the separator
-    sep = st.selectbox("Select the separator", ("Comma", "Tab", ";", ":"))
-    sep = "," if sep == "Comma" else "\t" if sep == "Tab" else ";" if sep == ";" else ":"
+    # Use a função st.file_uploader para permitir ao usuário fazer upload de um arquivo CSV
+    uploaded_file = st.file_uploader("Choose a CSV file")
 
     if uploaded_file is not None:
-        # Read the CSV data from the uploaded file
-        df = pd.read_csv(StringIO(uploaded_file.getvalue().decode('utf-8')), sep=sep)
+        # Ler os dados CSV do arquivo carregado
+        df = pd.read_csv(uploaded_file)
         st.title("Dataframe:")
         st.write(df)
 
-        # Use the analysis function from dataprep module to create a 'DataframeReport' object.
+        # Use a função de análise do módulo dataprep para criar um objeto 'DataframeReport'.
         @st.cache_data
         def generate_report(df):
             report = create_report(df)
@@ -31,7 +26,7 @@ def app(title=None):
             source_code = HtmlFile.read() 
             return source_code
 
-        # Render the output on a web page.
+        # Renderizar a saída em uma página web.
         if 'source_code' in st.session_state:
             # Se o estado da sessão já existir, recuperamos o valor
             source_code = st.session_state['source_code']
@@ -43,4 +38,3 @@ def app(title=None):
         components.html(source_code, height=1200, width=1500, scrolling=True)
 
 app(title='Dataprep Visualization Viz')
-
